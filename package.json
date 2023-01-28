@@ -1,0 +1,16 @@
+{
+  "name": "servesa-monorepo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "GPL-3.0",
+  "dependencies": {
+    "eslint": "^8.31.0",
+    "eslint-plugin-react": "^7.32.0"
+  }
+}

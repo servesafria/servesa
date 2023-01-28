@@ -1,0 +1,8 @@
+link-workspace-packages: deep
+prefer-workspace-packages: true
+prefer-symlinked-executables: true
+packages:
+  # all packages in direct subdirs of packages/
+  - 'packages/*'
+  # exclude packages that are inside test directories
+  - '!**/test/**'

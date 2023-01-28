@@ -1,0 +1,18 @@
+{
+  "name": "@servesa/jsx-to-string",
+  "version": "1.0.1",
+  "main": "jsx-runtime.js",
+  "type": "module",
+  "exports": {
+    "./jsx-runtime": "./jsx-runtime.js"
+  },
+  "author": "Zoran Obradović",
+  "license": "GPL-3.0",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "classnames": "^2.3.2"
+  },
+  "description": "Converts jsx to string"
+}

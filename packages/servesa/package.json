@@ -1,0 +1,50 @@
+{
+  "name": "servesa",
+  "version": "1.0.1",
+  "main": "./index.js",
+  "type": "module",
+  "bin": {
+    "servesa": "bin/servesa.sh"
+  },
+  "exports": {
+    "./lib/*": "./lib/*",
+    "./tsconfig.json": "./_tsconfig.json"
+  },
+  "author": "",
+  "license": "GPL-3.0",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "postinstall": "echo servesa installed"
+  },
+  "dependencies": {
+    "@keyv/sqlite": "^3.6.4",
+    "@servesa/directory-index": "workspace:^1.0.0",
+    "@servesa/jsx-to-string": "workspace:^1.0.1",
+    "@servesa/utils": "workspace:^1.0.0",
+    "body-parser": "^2.0.0-beta.1",
+    "classnames": "^2.3.2",
+    "connect-sqlite3": "^0.9.13",
+    "cookie-parser": "^1.4.6",
+    "express": "^5.0.0-beta.1",
+    "express-session": "^1.17.3",
+    "grant": "^5.4.21",
+    "json-merger": "^1.1.9",
+    "keyv": "^4.5.2",
+    "keyv-file": "^0.2.0",
+    "morgan": "^1.10.0",
+    "tsx": "^3.12.1",
+    "yaml": "^2.2.1"
+  },
+  "devDependencies": {
+    "@servesa/utils": "workspace:^1.0.0",
+    "memorystore": "^1.6.7",
+    "nodemon": "^2.0.20"
+  },
+  "directories": {
+    "lib": "lib"
+  },
+  "description": "",
+  "peerDependencies": {
+    "memorystore": "^1.6.7"
+  }
+}

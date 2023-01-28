@@ -1,0 +1,23 @@
+{
+  "name": "@servesa/plugin-router-vite",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "author": "",
+  "license": "ISC",
+  "exports": {
+    "./plugins": "./plugins",
+    "./plugins/*": "./plugins/*"
+  },
+  "description": "",
+  "dependencies": {
+    "@servesa/utils": "workspace:^1.0.0"
+  },
+  "peerDependencies": {
+    "servesa": "workspace:^1.0.1",
+    "vite": "^4.0.4"
+  },
+  "devDependencies": {
+    "servesa": "workspace:^1.0.1"
+  }
+}

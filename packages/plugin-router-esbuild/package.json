@@ -1,0 +1,23 @@
+{
+  "name": "@servesa/plugin-router-esbuild",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "author": "",
+  "license": "GPL-3.0",
+  "exports": {
+    "./plugins": "./plugins",
+    "./plugins/*": "./plugins/*"
+  },
+  "description": "",
+  "dependencies": {
+    "@servesa/utils": "workspace:^1.0.0"
+  },
+  "peerDependencies": {
+    "esbuild": ">=0.17.4",
+    "servesa": "workspace:^1.0.1"
+  },
+  "devDependencies": {
+    "servesa": "workspace:^1.0.1"
+  }
+}

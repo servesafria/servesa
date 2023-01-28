@@ -1,0 +1,23 @@
+{
+  "name": "@servesa/utils",
+  "version": "1.0.0",
+  "main": "utils.js",
+  "types": "types/utils.d.ts",
+  "type": "module",
+  "author": "",
+  "license": "GPL-3.0",
+  "dependencies": {
+    "glob": "^8.0.3",
+    "json-merger": "^1.1.9"
+  },
+  "description": "",
+  "scripts": {
+    "build": "tsc utils.js --declaration --allowJs --emitDeclarationOnly --outDir types"
+  },
+  "devDependencies": {
+    "http-assert": "^1.5.0"
+  },
+  "peerDependencies": {
+    "http-assert": "^1.5.0"
+  }
+}
