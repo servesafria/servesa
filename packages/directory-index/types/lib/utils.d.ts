@@ -11,6 +11,6 @@ export function parsePath(path: any, from?: string, extension?: string): {
     file: any;
     name: any;
     extension: string;
-    isIndex: boolean;
+    isParent: boolean;
 };
 export function ancestorsOfName(name: string): string[];

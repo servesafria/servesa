@@ -1,5 +1,5 @@
 import { Loadable } from "@servesa/directory-index"
-import { assert, toFlatArray } from "@servesa/utils"
+import { assert, stamp } from "@servesa/utils"
 import { composeHandler } from "./Router"
 export class Route extends Loadable {
   get short() {
@@ -12,14 +12,14 @@ export class Route extends Loadable {
   name = null
   file = null
 
-  base =""
+  base = ""
 
   get route() {
-    return this.#route ??= '/' + this.name + (this.name && this.isIndex ? '/' : '')
+    return this.#route ??= '/' + this.name + (this.name && this.isParent ? '/' : '')
   } #route
 
   get paramNames() {
-    return this.#paramNames ??= [...this.parent?.paramNames||[],this.paramName].filter(Boolean)
+    return this.#paramNames ??= [...this.parent?.paramNames || [], this.paramName].filter(Boolean)
   } #paramNames
 
   get isParam() {
@@ -35,23 +35,21 @@ export class Route extends Loadable {
   localURL({ req }, params = {}) {
     let effective = Object.assign({}, req.params, params);
     for (const n of this.paramNames) {
-      if(!(n in effective)) return null 
+      if (!(n in effective)) return null
     }
-    return this.base.replace(/[/]+$/,'') + this.route.replace(/\[(?:\.\.\.)?(\w+)\]/g, ($, $1) => encodeURIComponent(effective[$1]));
+    return this.base.replace(/[/]+$/, '') + this.route.replace(/\[(?:\.\.\.)?(\w+)\]/g, ($, $1) => encodeURIComponent(effective[$1]));
   }
   allow = async ctx => (!this.spec.ALLOW || await this.spec.ALLOW(ctx))
 
-  extendContext (ctx) {
+  extendContext(ctx) {
     ctx.route = this
-    ctx.param = ctx.params[this.paramName]
   }
 
-  get mwExtendContext () {
+  get mwExtendContext() {
     return this.extendContext
   }
-  
 
-  get mwHandlePage () {
+  get mwHandlePage() {
     return this.#mwHandler ??= composeHandler(
       this.mwCheckMethod,
       this.mwFixSlash,
@@ -89,8 +87,23 @@ export class Route extends Loadable {
   }
 
   mwFixSlash = (ctx) => {
-    //console.log(ctx.req.url, this.route, this.localURL(ctx), this.isIndex);
-    if (this.isIndex != ctx.req.url.endsWith('/')) ctx.res.redirect(307, this.localURL(ctx))
+    //console.log(ctx.req.url, this.route, this.localURL(ctx), this.isParent);
+    if (this.isParent != ctx.req.url.endsWith('/')) ctx.res.redirect(307, this.localURL(ctx))
   }
 
+  stamp = {
+    ALLOW: stamp.LAST,
+    BEFORE: stamp.ALL,
+    BEGIN: stamp.LAST,
+    ALL: stamp.LAST,
+    END: stamp.LAST,
+    AFTER: stamp.ALL,
+
+    HEAD: stamp.LAST,
+    GET: stamp.LAST,
+    POST: stamp.LAST,
+    PUT: stamp.LAST,
+    PATCH: stamp.LAST,
+
+  }
 }

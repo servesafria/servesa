@@ -23,7 +23,6 @@ export class DirectoryIndex {
     return this.#entries.get(name)
   }
   
-
   async loadDirectory(path,from,to) {
     let extensions = this.extensions
     report(`Loading ${extensions.map(x=>'**/*.'+x).join(',')} from ${path}`)
@@ -69,6 +68,7 @@ export class DirectoryIndex {
     if(!item) return;
     this.#entriesOf.set(item,entry)
     Object.defineProperties(item,{
+      index: { get: ()=> this },
       name: { get: ()=> entry.name },
       slug: { get: ()=> entry.slug },
       file: { get: ()=> entry.file },
@@ -77,7 +77,7 @@ export class DirectoryIndex {
       ancestors: { get: ()=> this.#ancestorsOf(item).reverse() },
       children: { get: ()=> this.#childrenOf(item) },
       siblings: { get: ()=> this.#parentOf(item)?.children || [item] },
-      isIndex: { get: ()=> item.children.length > 0 },
+      isParent: { get: ()=> item.children.length > 0 },
     })
     
   }

@@ -35,7 +35,7 @@ export const parsePath = (path, from = "/", extension = "js") => {
     file: path,
     name,
     extension,
-    isIndex: isIndexPath(namePath),
+    isParent: isIndexPath(namePath),
   }
 }
 

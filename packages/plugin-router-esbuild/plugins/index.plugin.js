@@ -4,7 +4,7 @@ import { resolve } from "path";
 import { existsSync } from "fs";
 
 export default {
-  extend: 'router',
+  extends: 'router',
   import: x => import(x),
   dependencies: {
     esbuild: 'esbuild'
@@ -30,6 +30,7 @@ export default {
     esbuild: require.esbuild
   }),
   async onLoad() {
+    console.log('HELLO',this.conf)
     this.router.get('(.*)', async ({ req, res }) => {
       for (const extension of this.conf.extensions) {
         if (req.url.endsWith(extension)) {

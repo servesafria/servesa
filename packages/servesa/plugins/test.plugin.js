@@ -1,3 +1,3 @@
 export default {
-  extend: "store/key/sqlite"
+  extends: "store/key/sqlite"
 }

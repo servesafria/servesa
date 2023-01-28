@@ -40,7 +40,7 @@ export default {
 
     // all routes for all pages
     for (const page of this.pages.items) {
-      //report(route, '->', page.file, page.isIndex)
+      //report(route, '->', page.file, page.isParent)
       page.base = this.router.url
       let route = compileRoute(page.route)
       this.router.all(route,skin.mwExtendContext)

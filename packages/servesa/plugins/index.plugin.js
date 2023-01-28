@@ -3,17 +3,6 @@ import { mergeConf } from "@servesa/utils"
 const subs = [];
 
 export default {
-  compose: {
-    info(it, old) {
-      return mergeConf(old ?? {}, it)
-    }
-  },
-  merge: {
-    actions(it, old) {
-      let ret = mergeConf(old ?? {}, it)
-      return ret;
-    }
-  },
   info: () => ({}),
   actions: {},
   setup({ Servesa }) {

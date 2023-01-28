@@ -14,9 +14,19 @@ export function toValue(fn, ...args) {
   return fn
 }
 
-export function toValueOn(ctx, fn, ...args) {
-  if (typeof fn === 'function') return fn.call(ctx, ...args);
+export function toValueOn(target, fn, ...args) {
+  if (typeof fn === 'function') return fn.call(target, ...args);
   return fn
+}
+
+export function toFunction(fn) {
+  if (typeof fn === 'function') return fn;
+  return () => fn
+}
+
+export function toFunctionOn(target, fn) {
+  if (typeof fn === 'function') return fn.bind(target);
+  return () => fn
 }
 
 var lineCounter = 0;
@@ -134,47 +144,42 @@ export function compileRoute(route) {
     if (!m1) return `:${m2}`
     return `:${m2}*`
   })
-  return '/'+bits.join('/')
+  return '/' + bits.join('/')
 }
 
-export function allMerge(arr, fn) {
-  return toFlatArray(fn ? arr.map(fn) : arr)
-    .reduce((a, b) => mergeConf(a, b), {})
-}
-export function allAssign(arr, fn) {
-  return toFlatArray(fn ? arr.map(fn) : arr)
-    .reduce((a, b) => Object.assign(a, b), {})
-}
-export function allMergeProps(arr, fn) {
-  return toFlatArray(fn ? arr.map(fn) : arr)
-    .reduce((a, b) => Object.assign(a, Object.getOwnPropertyDescriptors(b)), {})
-}
-export function allAsyncMapper(arr, fn) {
-  let all = toFlatArray(fn ? arr.map(fn) : arr);
-  return async function (...args) {
-    let ret = []
-    for (const each of all) {
-      let value = await toValueOn(this, each, ...args)
-      ret.push(value)
+
+export function stamp(def, specs) {
+  specs = specs.filter(x => x?.constructor == Object)
+  const ret = {}
+  for (const [id, rule] of Object.entries(def)) {
+
+    const arr = toFlatArray(specs.map(x => x[id]))
+
+    if (typeof rule == 'object') {
+      ret[id] = stamp(rule, arr)
+      continue;
     }
-    return ret
+    ret[id] = rule(arr)
   }
+  return ret
 }
 
-export function allAsyncReducer(arr, map, reduce, initial=undefined) {
-  let all = toFlatArray(map ? arr.map(map) : arr);
-  return async function (...args) {
-    let ret;
-    if (initial == undefined) {
-      ret = await toValueOn(this, all.shift())  
-    } else {
-      ret = await toValueOn(this,initial,this)
+Object.assign(stamp, {
+  ALL: arr => [...arr],
+  LAST: arr => arr.get(-1),
+  ASSIGN: arr =>Object.assign({}, ...arr),
+  MERGE: arr => mergeConf(...arr),
+  PROPS: arr=> Object.assign({}, ...arr.map(Object.getOwnPropertyDescriptors)),
+  CALLER: arr => async function(args) {
+    for (const each of arr) {
+     await each.call(this,{ ...this.conf, ...args })
     }
-    
-    for (const each of all) {
-      let value = await toValueOn(this, each, ...args)
-      ret = await reduce.call(this, ret, value)
+  },
+  ASSIGNER: arr => async function(args) {
+    let ret = {};
+    for (const each of arr) {
+      Object.assign(ret,await toValueOn(this,each))
     }
-    return ret
-  }
-}
+    return ret;
+  },
+})

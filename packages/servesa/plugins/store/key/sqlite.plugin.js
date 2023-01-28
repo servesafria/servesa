@@ -7,7 +7,7 @@ export default {
   dependencies: {
     'KeySQLite':'@keyv/sqlite'
   },
-  extend:"store/key/keyv",
+  extends:"store/key/keyv",
   async info() {
     let fileStat = await stat(this.filename)
     return {

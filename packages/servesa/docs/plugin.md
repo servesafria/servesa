@@ -1,12 +1,12 @@
 ## Inheritance
 
-Each plugin automatically extends the ancestors in its path. If the plugin needs to extend other plugin(s), provide their name(s) in your plugin definition:
+Each plugin automatically extends the ancestors in its path. If the plugin needs to extends other plugin(s), provide their name(s) in your plugin definition:
 
 ```js
 export default {
-    extend: 'router',
+    extends: 'router',
     //or
-    extend: ['plugin', 'some/other/plugin'],
+    extends: ['plugin', 'some/other/plugin'],
     ...
 }
 ```

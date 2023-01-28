@@ -1,0 +1,16 @@
+{
+  "name": "cerveza",
+  "version": "1.0.1",
+  "main": "cerveza.js",
+  "types": "types/cerveza.d.ts",
+  "author": "Zoran Obradović (https://github.com/zocky)",
+  "license": "GPL-3.0",
+  "description": "Reduces an array of objects to a single object",
+  "scripts": {
+    "build": "tsc cerveza.js --declaration --allowJs --emitDeclarationOnly --outDir types",
+    "test": "jest tests/*"
+  },
+  "devDependencies": {
+    "jest": "^29.4.1"
+  }
+}
