@@ -5,7 +5,7 @@
   "types": "types/cerveza.d.ts",
   "author": "Zoran Obradović (https://github.com/zocky)",
   "license": "GPL-3.0",
-  "description": "Reduces an array of objects to a single object",
+  "description": "Process arrays and collections with chainable processors",
   "scripts": {
     "build": "tsc cerveza.js --declaration --allowJs --emitDeclarationOnly --outDir types",
     "test": "jest tests/*"
