@@ -53,19 +53,19 @@ Creates a new cerveza instance with the provided configuration.
 #### `"<name>"`
 The name of a defined processor.
 ```js
-  cerveza.process([1,2,3], 'override' ) // 3
+  cerveza([1,2,3], 'override' ) // 3
 ```
 
 #### `<function>`
 A custom function to process the array.
 ```js
-  cerveza.process( [1,2,3], arr => Math.min(...arr) ) // 1
+  cerveza( [1,2,3], arr => Math.min(...arr) ) // 1
 ```
 
 #### `{ ...<props> } `
 An object which defines processors for nested properties. 
 ```js
-  cerveza.process( 
+  cerveza( 
     [ { a:1 }, { a:2, b:2 }, { b:3 } ], 
     { a:'override', b:'all' } 
   ) // { a:2, b:[2, 3] }
@@ -75,9 +75,9 @@ This cannot appear within a list of processors. Use the `props` named processor 
 #### `{ <name>: <arg> } `
 A named processor with an argument. 
 ```js
-  cerveza.process( 
+  cerveza( 
     [ { a:1 }, { a:2, b:2 }, { b:3 } ], 
-    { a :'override', b: {override: 10 }, c: { override: 100} } 
+    { a :'override', b: { override: 10 }, c: { override: 100 } } 
   ) // { a:2, b:3, c: 100 }
 ```
 This cannot appear outside a list of processors. Always put these specifications in an array, even if you need only one.
