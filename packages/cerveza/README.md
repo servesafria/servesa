@@ -135,19 +135,11 @@ Process nested properties. This is the same as `{...processors}`, but can be cha
 ### Processing an array 
 
 ```js
-let reduced = cerveza( objects, {
-  someProp: 'override',
-  someOtherProp: 'all',
-  fixedProp: [{ set: 10 }],
-  renamedProp: [{ pick: 'originalName'}, 'override'],
-  nestedProps: {
-    first: 'override',
-  }
-})
+let reduced = cerveza( [1,2,3], 'override') // 3
 ```
 
 
-### Reducing nested properties
+### Processing nested properties
 
 ```js
 let result = cerveza( objects, {
@@ -164,19 +156,29 @@ let result = cerveza( objects, {
 ### Using custom processors
 ```js
 
-let result = cerveza( objects, {
-  combinedProps: [
-    {pick:'props'}, 
+let result = cerveza([{
+  inheritable: {
+    a: 1,
+    b: 2
+  }
+},{
+  inheritable: {
+    a: 3,
+    c: 4
+  },
+}], {
+  inherited: [
+    { pick: 'inheritable' }, 
     arr => Object.assign({},...arr)
   ],
-})
+}) // { a: 3, b: 2, c: 4 }
 ```
 
 ### Defining new named processors
 ```js
 const myCerveza = cerveza({
-  sum: ()=> arr => arr.reduce( (a, b) => a+b),
-  atLeast: (min)=> arr => arr.filter(x=>x>min),
+  sum: ()=> arr => arr.reduce( (a, b) => a+b, 0 ),
+  atLeast: min => arr => arr.filter( x => x > min ),
 })
 let result = myCerveza( objects, {
   totalCount: [ { pick: 'count' }, 'sum' ],

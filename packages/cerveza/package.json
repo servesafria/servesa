@@ -1,6 +1,6 @@
 {
   "name": "cerveza",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "main": "cerveza.js",
   "types": "types/cerveza.d.ts",
   "author": "Zoran Obradović (https://github.com/zocky)",
