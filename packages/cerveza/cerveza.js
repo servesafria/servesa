@@ -15,23 +15,7 @@
  */
 
 
-const predefined = {
-  all: () => arr => arr,
-  override: (defaultValue) => arr => (arr.at(-1) || defaultValue),
-  pick: (picker) => (
-    typeof picker == 'string'
-      ? (arr, objects) => objects.map(each => each[picker])
-      : (arr, objects) => objects.map(picker)
-  ),
-  props: (processors) => arr => processCollection(processors),
-  set: (value) => () => value,
-  filter: fn => arr => arr.filter(fn),
-  map: fn => arr => arr.map(fn),
-  flat: arg => arr => arr.flat(arg),
-  flatMap: fn => arr => arr.flatMap(fn),
-  reduce: fn => arr => arr.reduce(fn),
-  sort: fn => arr => arr.sort(fn)
-}
+
 
 const isVanillaObject = (obj) => obj && typeof obj === 'object' && Object.getPrototypeOf(obj) === Object.prototype
 
@@ -40,6 +24,25 @@ const isVanillaObject = (obj) => obj && typeof obj === 'object' && Object.getPro
  */
 
 function createCerveza({ define, processor = arr => arr } = {}) {
+
+  const predefined = {
+    all: () => arr => arr,
+    override: (defaultValue) => arr => (arr.at(-1) || defaultValue),
+    pick: (picker) => (
+      typeof picker == 'string'
+        ? (arr, objects) => objects.map(each => each[picker])
+        : (arr, objects) => objects.map(picker)
+    ),
+    props: (processors) => arr => processCollection(arr, processors),
+    set: (value) => () => value,
+    filter: fn => arr => arr.filter(fn),
+    map: fn => arr => arr.map(fn),
+    flat: arg => arr => arr.flat(arg),
+    flatMap: fn => arr => arr.flatMap(fn),
+    reduce: fn => arr => arr.reduce(fn),
+    sort: fn => arr => arr.sort(fn)
+  }
+
   const named = {
     ...predefined,
     ...define
@@ -72,6 +75,7 @@ function createCerveza({ define, processor = arr => arr } = {}) {
       for (const each of processor) {
         let fn = getProcessor(each, named);
         values = fn(values, objects)
+        if (Array.isArray(values)) values=[...values]
       }
       return values
     }
@@ -80,6 +84,7 @@ function createCerveza({ define, processor = arr => arr } = {}) {
       //it's a vanilla object, so recurse for nested properties
       return processCollection(values, processor)
     }
+    throw new Error("Invalid processor specification in cerveza")
   }
 
   function processCollection(objects, processors) {

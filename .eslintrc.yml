@@ -16,4 +16,4 @@ rules:
   no-unused-vars: 
     - warn
     - argsIgnorePattern: next
-  react/react-in-jsx-scope: null
+  react/react-in-jsx-scope: off

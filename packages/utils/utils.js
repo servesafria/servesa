@@ -1,4 +1,5 @@
 export { default as assert } from "http-assert"
+//import { cerveza } from "cerveza";
 import { mergeObjects } from "json-merger";
 /**
  * Deep merge conf objects
@@ -183,3 +184,28 @@ Object.assign(stamp, {
     return ret;
   },
 })
+
+/*
+
+
+export const stamp2 = cerveza().define({
+  ALL: arr => [...arr],
+  LAST: arr => arr.get(-1),
+  ASSIGN: arr =>Object.assign({}, ...arr),
+  MERGE: arr => mergeConf(...arr),
+  PROPS: arr=> Object.assign({}, ...arr.map(Object.getOwnPropertyDescriptors)),
+  CALLER: arr => async function(args) {
+    for (const each of arr) {
+     await each.call(this,{ ...this.conf, ...args })
+    }
+  },
+  ASSIGNER: arr => async function(args) {
+    let ret = {};
+    for (const each of arr) {
+      Object.assign(ret,await toValueOn(this,each))
+    }
+    return ret;
+  }
+})
+
+*/

@@ -1,0 +1,26 @@
+{
+  "name": "@servesa/cervezario",
+  "version": "1.0.0",
+  "main": "index.js",
+  "types": "types/index.d.ts",
+  "author": "",
+  "license": "GPL-3.0",
+  "dependencies": {
+    "@servesa/utils": "workspace:^1.0.0",
+    "cerveza": "workspace:^1.0.4",
+    "glob": "^8.0.3",
+    "glob-promise": "^6.0.2"
+  },
+  "description": "",
+  "scripts": {
+    "build": "tsc index.js --declaration --allowJs --emitDeclarationOnly --outDir types",
+    "test": "jest --loader=tsx tests/*"
+  },
+  "devDependencies": {
+    "jest": "^29.4.1",
+    "testix": "workspace:^1.0.0"
+  },
+  "jest": {
+    "transform": {}
+  }
+}

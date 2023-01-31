@@ -137,7 +137,6 @@ export class DirectoryIndex {
     return children;
   }
 
-  
   #childrenOf(item) {
     let entry = this.entryOf(item);
     return this.#childrenOfEntry(entry)

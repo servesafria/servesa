@@ -16,6 +16,23 @@ importers:
     devDependencies:
       jest: 29.4.1
 
+  packages/cervezario:
+    specifiers:
+      '@servesa/utils': workspace:^1.0.0
+      cerveza: workspace:^1.0.4
+      glob: ^8.0.3
+      glob-promise: ^6.0.2
+      jest: ^29.4.1
+      testix: workspace:^1.0.0
+    dependencies:
+      '@servesa/utils': link:../utils
+      cerveza: link:../cerveza
+      glob: 8.0.3
+      glob-promise: 6.0.2_glob@8.0.3
+    devDependencies:
+      jest: 29.4.1
+      testix: link:../testix
+
   packages/directory-index:
     specifiers:
       '@servesa/utils': workspace:^1.0.0
@@ -61,7 +78,7 @@ importers:
       '@servesa/jsx-to-string': workspace:^1.0.1
       '@servesa/utils': workspace:^1.0.0
       body-parser: ^2.0.0-beta.1
-      cerveza: workspace:^1.0.1
+      cerveza: workspace:^1.0.4
       classnames: ^2.3.2
       connect-sqlite3: ^0.9.13
       cookie-parser: ^1.4.6
@@ -98,6 +115,12 @@ importers:
     devDependencies:
       memorystore: 1.6.7
       nodemon: 2.0.20
+
+  packages/testix:
+    specifiers:
+      glob: ^8.0.3
+    dependencies:
+      glob: 8.0.3
 
   packages/utils:
     specifiers:
@@ -920,6 +943,13 @@ packages:
       '@babel/types': 7.20.7
     dev: true
 
+  /@types/glob/8.0.1:
+    resolution: {integrity: sha512-8bVUjXZvJacUFkJXHdyZ9iH1Eaj5V7I8c4NdH5sQJsdXkqT4CA5Dhb4yb4VE/3asyx4L9ayZr1NIhTsWHczmMw==}
+    dependencies:
+      '@types/minimatch': 5.1.2
+      '@types/node': 18.11.18
+    dev: false
+
   /@types/graceful-fs/4.1.6:
     resolution: {integrity: sha512-Sig0SNORX9fdW+bQuTEovKj3uHcUL6LQKbCrrqb1X7J6/ReAbhCXRAhc+SMejhLELFj2QcyuxmUooZ4bt5ReSw==}
     dependencies:
@@ -942,9 +972,12 @@ packages:
       '@types/istanbul-lib-report': 3.0.0
     dev: true
 
+  /@types/minimatch/5.1.2:
+    resolution: {integrity: sha512-K0VQKziLUWkVKiRVrx4a40iPaxTUefQmjtkQofBkYRcoaaL/8rhwDWww9qWbrgicNOgnpIsMxyNIUM4+n6dUIA==}
+    dev: false
+
   /@types/node/18.11.18:
     resolution: {integrity: sha512-DHQpWGjyQKSHj3ebjFI/wRKcqQcdR+MoFBygntYOZytCqNfkd2ZC4ARDJ2DQqhjH5p85Nnd3jhUJIXrszFX/JA==}
-    dev: true
 
   /@types/prettier/2.7.2:
     resolution: {integrity: sha512-KufADq8uQqo1pYKVIYzfKbJfBAc0sOeXqGbFaSpv8MRmC/zXgowNZmFcbngndGk922QDmOASEXUZCaY48gs4cg==}
@@ -2511,6 +2544,16 @@ packages:
     engines: {node: '>=10.13.0'}
     dependencies:
       is-glob: 4.0.3
+    dev: false
+
+  /glob-promise/6.0.2_glob@8.0.3:
+    resolution: {integrity: sha512-Ni2aDyD1ekD6x8/+K4hDriRDbzzfuK4yKpqSymJ4P7IxbtARiOOuU+k40kbHM0sLIlbf1Qh0qdMkAHMZYE6XJQ==}
+    engines: {node: '>=16'}
+    peerDependencies:
+      glob: ^8.0.3
+    dependencies:
+      '@types/glob': 8.0.1
+      glob: 8.0.3
     dev: false
 
   /glob/7.2.3:
