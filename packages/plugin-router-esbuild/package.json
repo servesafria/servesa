@@ -11,13 +11,13 @@
   },
   "description": "",
   "dependencies": {
-    "@servesa/utils": "workspace:^1.0.0"
+    "@servesa/utils": "workspace:^1.0.0",
+    "esbuild": "^0.17.5"
   },
   "peerDependencies": {
-    "esbuild": ">=0.17.4",
+    "esbuild": ">=0.17.0",
     "servesa": "workspace:^1.0.1"
   },
   "devDependencies": {
-    "servesa": "workspace:^1.0.1"
   }
 }

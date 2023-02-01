@@ -1,14 +1,15 @@
-const glob = require("glob-promise");
-const { fixName, splitName } = require("./utils.js");
-const { resolve } = require('node:path')
-exports.Indexer = class Indexer {
+import glob from "glob-promise"
+import { fixName, splitName } from "./utils.js"
+import { resolve } from "node:path"
+
+export class Indexer {
   config = {
     // directory index options
     onEntriesAdded: null,
     extension: '.json',
     indexName: 'index',
     autoIndex: true,
-    importer: x => require(x),
+    importer: x => import(x),
     pickExtends: x => x.extends,
   }
   constructor(config) {

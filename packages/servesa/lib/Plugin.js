@@ -69,3 +69,4 @@ export const Plugin = Servesa => class ServesaPlugin extends Stampable {
     }
   }
 }
+

@@ -1,19 +1,19 @@
 {
-  "name": "@servesa/cervezario",
+  "name": "cervezario",
   "version": "1.0.0",
-  "main": "index.js",
-  "types": "types/index.d.ts",
+  "main": "cervezario.js",
+  "type": "module",
+  "types": "types/cervezario.d.ts",
   "author": "",
   "license": "GPL-3.0",
   "dependencies": {
-    "@servesa/utils": "workspace:^1.0.0",
     "cerveza": "workspace:^1.0.4",
     "glob": "^8.0.3",
     "glob-promise": "^6.0.2"
   },
   "description": "",
   "scripts": {
-    "build": "tsc index.js --declaration --allowJs --emitDeclarationOnly --outDir types",
+    "build": "tsc ./cervezario.js --declaration --allowJs --emitDeclarationOnly --outDir types",
     "test": "jest --loader=tsx tests/*"
   },
   "devDependencies": {

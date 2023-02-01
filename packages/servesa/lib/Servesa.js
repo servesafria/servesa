@@ -6,7 +6,7 @@ import http from "node:http"
 import express from "express"
 import cookieParser from "cookie-parser"
 
-import { Plugins } from "./Plugins.js";
+import { Plugins, Plugins2 } from "./Plugins.js";
 import { Plugin } from "./Plugin.js";
 import { Service } from "./Service.js";
 import { Auth } from "./Auth.js"
@@ -23,6 +23,7 @@ export const Servesa = new class Servesa {
   Plugin = Plugin(this)
 
   plugins = Plugins(this)
+  plugins2 = Plugins2(this)
   auth = Auth(this);
   
 
@@ -131,13 +132,16 @@ export const Servesa = new class Servesa {
   }
 
   async #loadPlugins() {
+    await this.plugins2.loadDirectory(resolve(__dirname, '../plugins'))
+    await this.plugins2.loadDirectory(this.resolve('plugins'),{mountAt:"local"})
     await this.plugins.loadDirectory(resolve(__dirname, '../plugins'))
     await this.plugins.loadDirectory(this.resolve('plugins'), '', 'local')
     for (const id in this.config.external) {
       let externalPackage = this.config.external[id]
       //let externalModule = await import(externalPackage)
       let externalDirectory = this.resolve('node_modules', externalPackage);
-      let pkg = await import(resolve(externalDirectory, 'package.json'))
+      //let pkg = await import(resolve(externalDirectory, 'package.json'))
+      await this.plugins2.loadDirectory(resolve(externalDirectory, 'plugins'), {mountAt: 'external/' + id})
       await this.plugins.loadDirectory(resolve(externalDirectory, 'plugins'), '', 'external/' + id)
     }
   }
@@ -167,6 +171,7 @@ export const Servesa = new class Servesa {
     let { plugin: pluginName, name, ...conf } = input;
     name ??= pluginName.replace(/[/]/g, "-") + "-" + (Object.keys(this.services).length + 1);
     assert(!this.services[name], "duplicate service name", { name })
+    await this.plugins2.createService(pluginName, conf, requires);
     let service = await this.plugins.createService(pluginName, conf, requires);
     service.name=name;
     this.services[name] = service

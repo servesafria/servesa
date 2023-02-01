@@ -1,11 +1,10 @@
-import { readFile } from "fs/promises";
 import { sortBy, splitKeys, mapKeys } from "@servesa/utils"
 import { resolve } from "path";
 import { existsSync } from "fs";
 
 export default {
   extends: 'router',
-  import: x => import(x),
+  import: async x => await import(x),
   dependencies: {
     esbuild: 'esbuild'
   },

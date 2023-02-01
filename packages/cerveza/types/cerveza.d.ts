@@ -1,21 +1,10 @@
-declare function _exports(objects: obj[], reducers: obj): {};
-declare namespace _exports {
-    export { cerveza };
-    export { _cerveza as create };
-    export { cbReducer, cbCreateReducer };
-}
+declare function _exports(array: any, processor?: any): any;
 export = _exports;
 /**
- * Create a reducer.
+ * Create a processor.
  */
-export type cbReducer = (values: any[], objects: any[]) => any;
+export type cbProcessor = (values: any[], objects: object[]) => any;
 /**
- * Create a reducer.
+ * Create a processor.
  */
-export type cbCreateReducer = (argument?: any) => any;
-declare function cerveza(values: any[], processor: any): {};
-declare namespace cerveza { }
-/**
- * @param  {obj<cbCreateReducer>} {named}={}
-  */
-declare function _cerveza({ define: _named }?: obj<cbCreateReducer>): (values: obj[], processor: any) => {};
+export type cbCreateProcessor = (argument?: any) => any;

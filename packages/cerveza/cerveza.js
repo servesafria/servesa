@@ -3,7 +3,7 @@
  * Create a processor.
  * @callback cbProcessor
  * @param {any[]} values
- * @param {obj[]} objects
+ * @param {object[]} objects
  */
 
 
@@ -17,17 +17,17 @@
 
 
 
-const isVanillaObject = (obj) => obj && typeof obj === 'object' && Object.getPrototypeOf(obj) === Object.prototype
+const isVanillaObject = (object) => object && typeof object === 'object' && Object.getPrototypeOf(object) === Object.prototype
 
 /**
- * @param  {obj<cbCreateProcessor>} {define}={}
+ * @param  {object<cbCreateProcessor>} {define}={}
  */
 
 function createCerveza({ define, processor = arr => arr } = {}) {
 
   const predefined = {
     all: () => arr => arr,
-    override: (defaultValue) => arr => (arr.at(-1) || defaultValue),
+    override: (defaultValue) => ['noundef',arr => (arr.at(-1) || defaultValue)],
     pick: (picker) => (
       typeof picker == 'string'
         ? (arr, objects) => objects.map(each => each[picker])
@@ -37,10 +37,11 @@ function createCerveza({ define, processor = arr => arr } = {}) {
     set: (value) => () => value,
     filter: fn => arr => arr.filter(fn),
     map: fn => arr => arr.map(fn),
-    flat: arg => arr => arr.flat(arg),
+    flat: arg => arr => arr.flat(arg ?? Infinity),
     flatMap: fn => arr => arr.flatMap(fn),
     reduce: fn => arr => arr.reduce(fn),
-    sort: fn => arr => arr.sort(fn)
+    sort: fn => arr => arr.sort(fn),
+    noundef: () => arr => arr.filter(x => x !== undefined)
   }
 
   const named = {
@@ -50,53 +51,46 @@ function createCerveza({ define, processor = arr => arr } = {}) {
   let preset = processor
 
   function getProcessor(spec) {
+    if (typeof spec === 'function') return spec
+    if (Array.isArray(spec)) {
+      let fns = spec.map(getProcessor);
+      return (value,objects) => {
+        for (const fn of fns) value = fn(value,objects);
+        return value;
+      }
+    }
     if (typeof spec === 'string') {
       if (!named[spec]) throw new Error('Invalid named processor in cerveza:' + spec + '.')
-      return named[spec]()
+      return getProcessor(named[spec]())
     }
     if (typeof spec === 'object') {
       let entries = Object.entries(spec);
       if (entries.length !== 1) throw new Error('Invalid processor in cerveza.')
       let [name, arg] = entries[0];
       if (!named[name]) throw new Error('Invalid named processor in cerveza:' + name + '.')
-      return named[name](arg)
-    }
-    if (typeof spec === 'function') return spec
-  }
-
-  function processArray(values, processor, objects = values) {
-    if (typeof processor == 'function' || typeof processor == 'string') {
-      // treat a single function or string as an array
-      processor = [processor]
-    }
-
-    if (Array.isArray(processor)) {
-      // we have an array, we assume that they are functions
-      for (const each of processor) {
-        let fn = getProcessor(each, named);
-        values = fn(values, objects)
-        if (Array.isArray(values)) values=[...values]
-      }
-      return values
-    }
-
-    if (isVanillaObject(processor)) {
-      //it's a vanilla object, so recurse for nested properties
-      return processCollection(values, processor)
+      return getProcessor(named[name](arg))
     }
     throw new Error("Invalid processor specification in cerveza")
   }
 
-  function processCollection(objects, processors) {
+  function processArray(values, spec, objects = values) {
+    if (isVanillaObject(spec)) {
+      return processCollection(values, spec)
+    }
+    let fn = getProcessor(spec);
+    values = fn(values, objects)
+    if (Array.isArray(values)) values = [...values]
+    return values
+  }
+
+  function processCollection(objects, specs) {
     objects = objects.filter(isVanillaObject)
     const ret = {}
-    for (let [id, processor] of Object.entries(processors)) {
+    for (let [id, spec] of Object.entries(specs)) {
 
       let values = objects.map(object => object[id])
-        .flat(Infinity)
-        .filter(value => value !== undefined)
 
-      ret[id] = processArray(values, processor, objects)
+      ret[id] = processArray(values, spec, objects)
     }
     return ret
   }

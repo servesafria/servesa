@@ -1,4 +1,4 @@
-exports.Collector = class Collector {
+export class Collector {
   config = {
     getSpec: _ => (_,{ }),
     getParentName: _ => (_,null),

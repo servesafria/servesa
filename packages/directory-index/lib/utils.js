@@ -51,27 +51,27 @@ export const ancestorsOfName = name =>
 
 
 
-    export function scanDirectory({
-      path = '',
-      from = "",
-      to = "",
-      extensions = ['jsx']
-    }) {
-      let source = resolve(path, from)
-      from = relative(path, source)
-      if (from.startsWith('..')) throw "bad from"
-      extensions = sortBy(extensions, x => -x.length);
-      let files = glob
-        .sync('./**/*', { cwd: source, nodir: true, absolute: true })
-        .map(file => {
-          let extension = [...extensions].reverse().find(x => file.endsWith('.' + x))
-          if (!extension) return null
-          return {
-            file: file,
-            name: pathToName(file.slice(0, -extension.length - 1), path, to),
-            extension: extension
-          }
-        })
-        .filter(Boolean)
-      return sortBy(files, f => f.name)
-    }    
+export function scanDirectory({
+  path = '',
+  from = "",
+  to = "",
+  extensions = ['jsx']
+}) {
+  let source = resolve(path, from)
+  from = relative(path, source)
+  if (from.startsWith('..')) throw "bad from"
+  extensions = sortBy(extensions, x => -x.length);
+  let files = glob
+    .sync('./**/*', { cwd: source, nodir: true, absolute: true })
+    .map(file => {
+      let extension = [...extensions].reverse().find(x => file.endsWith('.' + x))
+      if (!extension) return null
+      return {
+        file: file,
+        name: pathToName(file.slice(0, -extension.length - 1), path, to),
+        extension: extension
+      }
+    })
+    .filter(Boolean)
+  return sortBy(files, f => f.name)
+}    
