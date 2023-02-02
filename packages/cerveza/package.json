@@ -1,6 +1,6 @@
 {
   "name": "cerveza",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "main": "cerveza.js",
   "types": "types/cerveza.d.ts",
   "author": "Zoran Obradović (https://github.com/zocky)",
@@ -11,8 +11,6 @@
     "type": "git",
     "url": "https://github.com/servesafria/servesa.git"
   },
-
-
   "scripts": {
     "build": "tsc cerveza.js --declaration --allowJs --emitDeclarationOnly --outDir types",
     "test": "jest tests/*"
