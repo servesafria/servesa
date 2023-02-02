@@ -6,8 +6,7 @@ import http from "node:http"
 import express from "express"
 import cookieParser from "cookie-parser"
 
-import { Plugins, Plugins2 } from "./Plugins.js";
-import { Plugin } from "./Plugin.js";
+import { Plugins } from "./Plugins.js";
 import { Service } from "./Service.js";
 import { Auth } from "./Auth.js"
 
@@ -20,12 +19,10 @@ const __dirname = fileURLToPath(new URL('.', import.meta.url));
 
 export const Servesa = new class Servesa {
   Service = Service(this)
-  Plugin = Plugin(this)
 
   plugins = Plugins(this)
-  plugins2 = Plugins2(this)
   auth = Auth(this);
-  
+
 
   Router = ({ url = "/" }) => new Router({ url, _parent: this.app })
 
@@ -132,17 +129,14 @@ export const Servesa = new class Servesa {
   }
 
   async #loadPlugins() {
-    await this.plugins2.loadDirectory(resolve(__dirname, '../plugins'))
-    await this.plugins2.loadDirectory(this.resolve('plugins'),{mountAt:"local"})
     await this.plugins.loadDirectory(resolve(__dirname, '../plugins'))
-    await this.plugins.loadDirectory(this.resolve('plugins'), '', 'local')
+    await this.plugins.loadDirectory(this.resolve('plugins'), { mountAt: "local" })
     for (const id in this.config.external) {
       let externalPackage = this.config.external[id]
       //let externalModule = await import(externalPackage)
       let externalDirectory = this.resolve('node_modules', externalPackage);
       //let pkg = await import(resolve(externalDirectory, 'package.json'))
-      await this.plugins2.loadDirectory(resolve(externalDirectory, 'plugins'), {mountAt: 'external/' + id})
-      await this.plugins.loadDirectory(resolve(externalDirectory, 'plugins'), '', 'external/' + id)
+      await this.plugins.loadDirectory(resolve(externalDirectory, 'plugins'), { mountAt: 'external/' + id })
     }
   }
 
@@ -163,19 +157,32 @@ export const Servesa = new class Servesa {
 
 
   loadService = async (input, requires = []) => {
-    if (typeof input === 'string') {
-      let service = this.services[input]
-      assert(service, 500, 'unknown service name', { name: input })
-      return service;
+    try {
+      let time = performance.now()
+      if (typeof input === 'string') {
+        let service = this.services[input]
+        assert(service, 500, 'unknown service name', { name: input })
+        return service;
+      }
+      let { plugin: pluginName, name, ...conf } = input;
+      name ??= pluginName.replace(/[/]/g, "-") + "-" + (Object.keys(this.services).length + 1);
+      assert(!this.services[name], "duplicate service name", { name })
+
+      let plugin = this.plugins.get(pluginName);
+      assert(!!plugin, 500, { message: 'missing plugin', plugin: pluginName })
+      assert(plugin.isAllOf(requires), 500, { message: 'bad plugin', plugin: pluginName, is: plugin.is, requires })
+      let service = await this.Service.create(plugin, conf);
+
+      service.info = plugin.info;
+      service.actions = plugin.actions;
+      this.services[name]=service;
+      time = performance.now() - time
+      report(`Loaded service   ${(conf.name || '<anon>').padEnd(16)} ${plugin.name.padEnd(32)} ${time.toFixed(0).padStart(5)} ms`)
+      return service
+    } catch (e) {
+      console.error('FAILED SERVICE', input?.name || input )
+      throw e
     }
-    let { plugin: pluginName, name, ...conf } = input;
-    name ??= pluginName.replace(/[/]/g, "-") + "-" + (Object.keys(this.services).length + 1);
-    assert(!this.services[name], "duplicate service name", { name })
-    await this.plugins2.createService(pluginName, conf, requires);
-    let service = await this.plugins.createService(pluginName, conf, requires);
-    service.name=name;
-    this.services[name] = service
-    return service;
   }
 
   get API() {

@@ -1,8 +1,8 @@
-import { toFlatArray, mergeConf } from "./utils.js"
+import { mergeConf } from "./utils.js"
 
 export const Service = Servesa => class ServesaService {
     static async create(plugin, conf) {
-      await plugin.init();
+      await plugin.install();
       let service = new this(plugin);
       await service.#configure(conf)
       service.#defineProperties(conf)
@@ -13,7 +13,7 @@ export const Service = Servesa => class ServesaService {
       this.plugin = plugin;
     }
     async #configure(conf) {
-      const {defaults,configure} = this.plugin.stamped;
+      const {defaults,configure} = this.plugin;
       this.conf = this.userConf = mergeConf({},conf)
       this.conf = mergeConf(defaults, this.conf)
       await configure.call(this, {
@@ -23,7 +23,7 @@ export const Service = Servesa => class ServesaService {
     }
     
     #defineProperties() {
-      const { props } = this.plugin
+      const { API:props } = this.plugin || {}
       Object.defineProperties(this, props);
       for (const p in props) {
         const prop = props[p];
@@ -34,7 +34,7 @@ export const Service = Servesa => class ServesaService {
     }
 
     async #setup() {
-      const {setup,onLoad,onLoaded}=this.plugin.stamped
+      const {setup,onLoad,onLoaded}=this.plugin
       const serviceContext = {
         ...this.conf,
         conf: this.conf,

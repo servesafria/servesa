@@ -32,7 +32,7 @@ export class Collector {
     return [].concat(
       this.#findParent(input),
       this.config.pickExtends(spec)
-    ).filter(Boolean)
+    ).filter(x=>x!=null)
   }
   #findSpec(input) {
     if (typeof input !== 'string') return input;

@@ -1,23 +1,7 @@
-import { DirectoryIndex } from "@servesa/directory-index";
 import { Cervezario } from "cervezario";
-import { assert, mergeConf, toValueOn } from "./utils.js"
+import { mergeConf, toFlatArray, toValueOn } from "./utils.js"
 
-export const Plugins = Servesa => new class ServesaPlugins extends DirectoryIndex {
-  constructor() {
-    super({ 'plugin.js': Servesa.Plugin })
-  }
-  createService = async (pluginName, conf, requires = []) => {
-    let plugin = this.get(pluginName);
-    assert(!!plugin, 500, { message: 'missing plugin', plugin: pluginName })
-    await plugin.init()
-    assert(plugin.isAllOf(requires), 500, { message: 'bad plugin', plugin: pluginName, is: plugin.is, requires })
-
-    return await plugin.createService(conf);
-  }
-}
-
-
-export const Plugins2 = Servesa => new class ServesaPlugins extends Cervezario {
+export const Plugins = Servesa => new class ServesaPlugins extends Cervezario {
   constructor() {
     super({
       extension: '.plugin.js',
@@ -30,10 +14,10 @@ export const Plugins2 = Servesa => new class ServesaPlugins extends Cervezario {
             await each.call(this, { ...this.conf, ...args })
           }
         }],
-        assigner: () => ['flat', 'noundef', 'fn', arr => async function (args) {
+        assigner: () => ['flat', 'noundef', 'fn', arr => async function (...args) {
           let ret = {};
           for (const each of arr) {
-            Object.assign(ret, await toValueOn(this, each))
+            Object.assign(ret, await toValueOn(this, each, ...args))
           }
           return ret;
         }],
@@ -41,6 +25,7 @@ export const Plugins2 = Servesa => new class ServesaPlugins extends Cervezario {
       },
       processor: {
         meta: arr => arr[0],
+        name: [{pick:x=>x.meta?.name},arr=>arr[0]],
         import: arr => arr.at(-1) || (x => import(x)),
         dependencies: 'assign',
         defaults: 'merge',
@@ -62,26 +47,25 @@ export const Plugins2 = Servesa => new class ServesaPlugins extends Cervezario {
         actions: 'assign',
         installed: [{ set: false }],
         onInstall: arr => arr.at(-1),
-        extending: [{ pick: x => x.meta?.inherits }, 'flat', 'noundef', { map: x => this.get(x) }],
-        
-        imported: ()=>({}),
-        required: ()=>({}),
-        install: () => async () => {
+        isAllOf: () => function (requires) {
+          return toFlatArray(requires).every(r=>this.meta.inherits.includes(r))
+        },
+        imported: () => ({}),
+        required: () => ({}),
+        getPlugin: () => name => this.get(name),
+        install: () => async function () {
           if (this.installed) return;
-          for (const ext of this.extending) {
-            await ext.install();
+          this.installed = true
+          for (const name of this.meta.inherits) {
+            await this.getPlugin(name).install();
           }
           for (const [id, dep] of Object.entries(this.dependencies)) {
             let it = this.imported[id] = await this.import(dep)
             this.required[id] = it.default ?? it
           }
-          await this.spec.onInstall?.call(this, { Servesa: Servesa.API, plugin: this })
-          this.installed = true
+          await this.onInstall?.call(this, { Servesa: Servesa.API, plugin: this })
         }
       }
     })
-  }
-  createService = async (pluginName, conf, requires = []) => {
-    console.log(this.get(pluginName))
   }
 }
