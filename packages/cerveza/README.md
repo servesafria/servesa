@@ -22,14 +22,14 @@ Process an array.
 #### `cerveza.define( processorDefs )`
 
 Define additional named processors. 
-* **`processorDefs`** An object of named processors to define. Each definition is a function which takes the provided argument (if any) and returns the actual processor function.
+* **`processorDefs`** An object of named processors to define. Each definition is a function which takes the provided argument (if any) and returns a valid processor specification, as described below.
 * **returns** the instance of cerveza, to allow chaining
   
 #### `cerveza.processor( processorSpec )`
 
-Set the default processor for this cerveza instance. This allows you to reuse the cerveza instance to process multiple array with the same processor.
+Set the default processor for this cerveza instance. This allows you to reuse the cerveza instance to process multiple arrays with the same processor.
 
-* **`processorDefs`** An object of named processors to define. Each definition is a function which takes the provided argument (if any) and returns the actual processor function.
+* **`processorSpec`** A processor specification, as described below.
 * **returns** the instance of cerveza, to allow chaining
 
 #### `cerveza.configure( { define?, processor? })`
@@ -72,15 +72,15 @@ An object which defines processors for nested properties.
 ```
 This cannot appear within a list of processors. Use the `props` named processor instead.
 
-#### `{ <name>: <arg> } `
+#### `[{ <name>: <arg> }]`
 A named processor with an argument. 
 ```js
   cerveza( 
     [ { a:1 }, { a:2, b:2 }, { b:3 } ], 
-    { a :'override', b: { override: 10 }, c: { override: 100 } } 
+    { a :'override', b: [{ override: 10 }], c: [{ override: 100 }] } 
   ) // { a:2, b:3, c: 100 }
 ```
-This cannot appear outside a list of processors. Always put these specifications in an array, even if you need only one.
+This cannot appear outside an array of processors, to avoid confusion with named properties. Always put these specifications in an array, even if you need only one.
 
 ### `[...<processors>]`
 An array of processors. Each processor will be called in turn with the result of the previous processor, starting with the array of values picked from the list of objects.
@@ -179,10 +179,12 @@ let result = cerveza([{
 const myCerveza = cerveza({
   sum: ()=> arr => arr.reduce( (a, b) => a+b, 0 ),
   atLeast: min => arr => arr.filter( x => x > min ),
+  sumLarge: min => [ { atLeast:min }, 'sum' ]
 })
 let result = myCerveza( objects, {
   totalCount: [ { pick: 'count' }, 'sum' ],
   largeCounts: [ { pick: 'count' }, { atLeast: 10 } ],
+  sumLarge: [ { pick: 'count' }, { sumLarge: 10 } ],
 })
 ```
 

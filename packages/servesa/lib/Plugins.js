@@ -63,8 +63,20 @@ export const Plugins2 = Servesa => new class ServesaPlugins extends Cervezario {
         installed: [{ set: false }],
         onInstall: arr => arr.at(-1),
         extending: [{ pick: x => x.meta?.inherits }, 'flat', 'noundef', { map: x => this.get(x) }],
-        init: () => async () => {
-          //this.parent.init()
+        
+        imported: ()=>({}),
+        required: ()=>({}),
+        install: () => async () => {
+          if (this.installed) return;
+          for (const ext of this.extending) {
+            await ext.install();
+          }
+          for (const [id, dep] of Object.entries(this.dependencies)) {
+            let it = this.imported[id] = await this.import(dep)
+            this.required[id] = it.default ?? it
+          }
+          await this.spec.onInstall?.call(this, { Servesa: Servesa.API, plugin: this })
+          this.installed = true
         }
       }
     })
