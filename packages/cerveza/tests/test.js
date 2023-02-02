@@ -1,5 +1,5 @@
 const create = require("../cerveza.js").create;
-cerveza = create({
+const cerveza = create({
   define: {
     sum: () => arr => arr.reduce((a, b) => a + b, 0)
   }
@@ -106,27 +106,9 @@ test('sub props', () => {
     a: 'override',
     b: {
       c: 'override',
-      d: []
+      d: 'noundef'
     }
   })
-  expect(result).toStrictEqual({
-    a: 4,
-    b: {
-      c: 12,
-      d: [11]
-    }
-  });
-});
-
-test('sub props', () => {
-  let myCerveza = cerveza.create().processor({
-    a: 'override',
-    b: {
-      c: 'override',
-      d: []
-    }
-  })
-  let result = myCerveza(objects)
   expect(result).toStrictEqual({
     a: 4,
     b: {
