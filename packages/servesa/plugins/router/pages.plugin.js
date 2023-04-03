@@ -43,10 +43,19 @@ export default {
       //report(route, '->', page.file, page.isParent)
       page.base = this.router.url
       let route = compileRoute(page.route)
-      this.router.all(route,skin.mwExtendContext)
-      this.router.all(route,page.mwExtendContext,page.mwHandlePage)
-     // this.router.all(page.route,ctx=>console.log(ctx.route));
-      this.router.all(route,skin.mwRender)
+      this.router.all(route, skin.mwExtendContext)
+      this.router.all(route, page.mwExtendContext, page.mwHandlePage)
+      // this.router.all(page.route,ctx=>console.log(ctx.route));
+      this.router.all(route, skin.mwRender)
     }
   }
 }
+
+
+
+
+
+
+
+
+
